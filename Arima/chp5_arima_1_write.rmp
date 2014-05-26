@@ -393,7 +393,7 @@
         <parameter key="keep_both_join_attributes" value="false"/>
       </operator>
       <operator activated="true" class="write_csv" compatibility="5.3.013" expanded="true" height="76" name="Write CSV" width="90" x="514" y="300">
-        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\rm_ar334_reg.csv"/>
+        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\dax_rm_ar334_reg.csv"/>
         <parameter key="column_separator" value=","/>
         <parameter key="write_attribute_names" value="true"/>
         <parameter key="quote_nominal_values" value="false"/>
