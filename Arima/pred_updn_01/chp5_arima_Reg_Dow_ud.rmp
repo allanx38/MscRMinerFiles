@@ -13,8 +13,8 @@
     <parameter key="process_duration_for_mail" value="30"/>
     <parameter key="encoding" value="SYSTEM"/>
     <process expanded="true">
-      <operator activated="true" class="read_csv" compatibility="5.3.015" expanded="true" height="60" name="Read CSV" width="90" x="45" y="30">
-        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\CAC_2000_d.csv"/>
+      <operator activated="true" class="read_csv" compatibility="5.3.015" expanded="true" height="60" name="Read CSV" width="90" x="112" y="30">
+        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\Dow_2000_d.csv"/>
         <parameter key="column_separators" value=","/>
         <parameter key="trim_lines" value="false"/>
         <parameter key="use_quotes" value="true"/>
@@ -44,7 +44,7 @@
         <parameter key="read_not_matching_values_as_missings" value="true"/>
         <parameter key="datamanagement" value="double_array"/>
       </operator>
-      <operator activated="true" class="generate_attributes" compatibility="5.3.015" expanded="true" height="76" name="Generate Attributes" width="90" x="179" y="30">
+      <operator activated="true" class="generate_attributes" compatibility="5.3.015" expanded="true" height="76" name="Generate Attributes" width="90" x="246" y="30">
         <list key="function_descriptions">
           <parameter key="UD" value="if(Close&gt;Open,1,0)"/>
         </list>
@@ -69,7 +69,7 @@
         </list>
       </operator>
       <operator activated="true" class="read_csv" compatibility="5.3.015" expanded="true" height="60" name="Read CSV (2)" width="90" x="179" y="480">
-        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\CAC_2000_d.csv"/>
+        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\Dow_2000_d.csv"/>
         <parameter key="column_separators" value=","/>
         <parameter key="trim_lines" value="false"/>
         <parameter key="use_quotes" value="true"/>
@@ -103,7 +103,7 @@
         <parameter key="create_nominal_ids" value="false"/>
         <parameter key="offset" value="0"/>
       </operator>
-      <operator activated="true" class="generate_id" compatibility="5.3.015" expanded="true" height="76" name="Generate ID (2)" width="90" x="313" y="30">
+      <operator activated="true" class="generate_id" compatibility="5.3.015" expanded="true" height="76" name="Generate ID (2)" width="90" x="380" y="30">
         <parameter key="create_nominal_ids" value="false"/>
         <parameter key="offset" value="0"/>
       </operator>
@@ -187,7 +187,7 @@
         <parameter key="cumulative_training" value="false"/>
         <parameter key="average_performances_only" value="true"/>
         <process expanded="true">
-          <operator activated="false" class="linear_regression" compatibility="5.3.015" expanded="true" height="94" name="Linear Regression" width="90" x="45" y="30">
+          <operator activated="true" class="linear_regression" compatibility="5.3.015" expanded="true" height="94" name="Linear Regression" width="90" x="45" y="30">
             <parameter key="feature_selection" value="M5 prime"/>
             <parameter key="alpha" value="0.05"/>
             <parameter key="max_iterations" value="10"/>
@@ -198,10 +198,9 @@
             <parameter key="use_bias" value="true"/>
             <parameter key="ridge" value="1.0E-8"/>
           </operator>
-          <operator activated="true" class="neural_net" compatibility="5.3.015" expanded="true" height="76" name="Neural Net" width="90" x="112" y="165">
+          <operator activated="false" class="neural_net" compatibility="5.3.015" expanded="true" height="76" name="Neural Net" width="90" x="112" y="165">
             <list key="hidden_layers">
               <parameter key="1" value="-1"/>
-              <parameter key="2" value="-1"/>
             </list>
             <parameter key="training_cycles" value="500"/>
             <parameter key="learning_rate" value="0.3"/>
@@ -213,7 +212,7 @@
             <parameter key="use_local_random_seed" value="false"/>
             <parameter key="local_random_seed" value="1992"/>
           </operator>
-          <operator activated="false" class="k_nn" compatibility="5.3.015" expanded="true" height="76" name="k-NN" width="90" x="45" y="255">
+          <operator activated="false" class="k_nn" compatibility="5.3.015" expanded="true" height="76" name="k-NN" width="90" x="112" y="300">
             <parameter key="k" value="15"/>
             <parameter key="weighted_vote" value="false"/>
             <parameter key="measure_types" value="MixedMeasures"/>
@@ -231,8 +230,8 @@
             <parameter key="kernel_a" value="1.0"/>
             <parameter key="kernel_b" value="0.0"/>
           </operator>
-          <connect from_port="training" to_op="Neural Net" to_port="training set"/>
-          <connect from_op="Neural Net" from_port="model" to_port="model"/>
+          <connect from_port="training" to_op="Linear Regression" to_port="training set"/>
+          <connect from_op="Linear Regression" from_port="model" to_port="model"/>
           <portSpacing port="source_training" spacing="0"/>
           <portSpacing port="sink_model" spacing="0"/>
           <portSpacing port="sink_through 1" spacing="0"/>
@@ -293,8 +292,20 @@
         <list key="key_attributes"/>
         <parameter key="keep_both_join_attributes" value="false"/>
       </operator>
-      <operator activated="true" class="write_csv" compatibility="5.3.015" expanded="true" height="76" name="Write CSV" width="90" x="581" y="480">
-        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\ARIMA\PredUpDn_01\ar_334_up_01_ANN_CAC.csv"/>
+      <operator activated="true" class="rename" compatibility="5.3.015" expanded="true" height="76" name="Rename (3)" width="90" x="581" y="435">
+        <parameter key="old_name" value="prediction(UD)"/>
+        <parameter key="new_name" value="pred"/>
+        <list key="rename_additional_attributes"/>
+      </operator>
+      <operator activated="true" class="generate_attributes" compatibility="5.3.015" expanded="true" height="76" name="Generate Attributes (3)" width="90" x="581" y="345">
+        <list key="function_descriptions">
+          <parameter key="pl" value="if(pred&gt;0.5,Close-Open,Open-Close)"/>
+        </list>
+        <parameter key="use_standard_constants" value="true"/>
+        <parameter key="keep_all" value="true"/>
+      </operator>
+      <operator activated="true" class="write_csv" compatibility="5.3.015" expanded="true" height="76" name="Write CSV" width="90" x="581" y="255">
+        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\ARIMA\PredUpDn_01\ar_334_01_Reg_Dow.csv"/>
         <parameter key="column_separator" value=","/>
         <parameter key="write_attribute_names" value="true"/>
         <parameter key="quote_nominal_values" value="false"/>
@@ -320,7 +331,9 @@
       <connect from_op="Validation" from_port="averagable 1" to_port="result 1"/>
       <connect from_op="Apply Model (2)" from_port="labelled data" to_op="Join" to_port="right"/>
       <connect from_op="Apply Model (2)" from_port="model" to_port="result 2"/>
-      <connect from_op="Join" from_port="join" to_op="Write CSV" to_port="input"/>
+      <connect from_op="Join" from_port="join" to_op="Rename (3)" to_port="example set input"/>
+      <connect from_op="Rename (3)" from_port="example set output" to_op="Generate Attributes (3)" to_port="example set input"/>
+      <connect from_op="Generate Attributes (3)" from_port="example set output" to_op="Write CSV" to_port="input"/>
       <connect from_op="Write CSV" from_port="through" to_port="result 3"/>
       <portSpacing port="source_input 1" spacing="0"/>
       <portSpacing port="sink_result 1" spacing="0"/>
