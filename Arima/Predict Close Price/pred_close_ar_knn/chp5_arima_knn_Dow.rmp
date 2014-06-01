@@ -15,8 +15,8 @@
     <process expanded="true">
       <operator activated="true" class="subprocess" compatibility="5.3.015" expanded="true" height="76" name="Gen Data Set" width="90" x="45" y="30">
         <process expanded="true">
-          <operator activated="true" class="read_csv" compatibility="5.3.015" expanded="true" height="60" name="Dax Train" width="90" x="179" y="75">
-            <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\Dax_2000_d.csv"/>
+          <operator activated="true" class="read_csv" compatibility="5.3.015" expanded="true" height="60" name="Dax" width="90" x="179" y="75">
+            <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\Dow_2000_d.csv"/>
             <parameter key="column_separators" value=","/>
             <parameter key="trim_lines" value="false"/>
             <parameter key="use_quotes" value="true"/>
@@ -50,7 +50,7 @@
             <parameter key="create_nominal_ids" value="false"/>
             <parameter key="offset" value="0"/>
           </operator>
-          <connect from_op="Dax Train" from_port="output" to_op="Generate ID (3)" to_port="example set input"/>
+          <connect from_op="Dax" from_port="output" to_op="Generate ID (3)" to_port="example set input"/>
           <connect from_op="Generate ID (3)" from_port="example set output" to_port="out 1"/>
           <portSpacing port="source_in 1" spacing="0"/>
           <portSpacing port="sink_out 1" spacing="0"/>
@@ -165,7 +165,7 @@
             <parameter key="use_bias" value="true"/>
             <parameter key="ridge" value="1.0E-8"/>
           </operator>
-          <operator activated="true" class="neural_net" compatibility="5.3.015" expanded="true" height="76" name="Neural Net" width="90" x="112" y="165">
+          <operator activated="false" class="neural_net" compatibility="5.3.015" expanded="true" height="76" name="Neural Net" width="90" x="112" y="345">
             <list key="hidden_layers"/>
             <parameter key="training_cycles" value="500"/>
             <parameter key="learning_rate" value="0.3"/>
@@ -177,8 +177,8 @@
             <parameter key="use_local_random_seed" value="false"/>
             <parameter key="local_random_seed" value="1992"/>
           </operator>
-          <operator activated="false" class="k_nn" compatibility="5.3.015" expanded="true" height="76" name="k-NN" width="90" x="45" y="255">
-            <parameter key="k" value="1"/>
+          <operator activated="true" class="k_nn" compatibility="5.3.015" expanded="true" height="76" name="k-NN" width="90" x="112" y="165">
+            <parameter key="k" value="15"/>
             <parameter key="weighted_vote" value="false"/>
             <parameter key="measure_types" value="MixedMeasures"/>
             <parameter key="mixed_measure" value="MixedEuclideanDistance"/>
@@ -195,8 +195,8 @@
             <parameter key="kernel_a" value="1.0"/>
             <parameter key="kernel_b" value="0.0"/>
           </operator>
-          <connect from_port="training" to_op="Neural Net" to_port="training set"/>
-          <connect from_op="Neural Net" from_port="model" to_port="model"/>
+          <connect from_port="training" to_op="k-NN" to_port="training set"/>
+          <connect from_op="k-NN" from_port="model" to_port="model"/>
           <portSpacing port="source_training" spacing="0"/>
           <portSpacing port="sink_model" spacing="0"/>
           <portSpacing port="sink_through 1" spacing="0"/>
@@ -239,10 +239,10 @@
         <parameter key="skip_undefined_labels" value="true"/>
         <parameter key="use_example_weights" value="true"/>
       </operator>
-      <operator activated="true" class="subprocess" compatibility="5.3.015" expanded="true" height="76" name="Gen Data Set (2)" width="90" x="45" y="300">
+      <operator activated="true" class="subprocess" compatibility="5.3.015" expanded="true" height="76" name="Gen Data Set (2)" width="90" x="45" y="255">
         <process expanded="true">
-          <operator activated="true" class="read_csv" compatibility="5.3.015" expanded="true" name="Dax Train (2)">
-            <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\Dax_2000_d.csv"/>
+          <operator activated="true" class="read_csv" compatibility="5.3.015" expanded="true" height="60" name="Dax (2)" width="90" x="45" y="30">
+            <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\Dow_2000_d.csv"/>
             <parameter key="column_separators" value=","/>
             <parameter key="trim_lines" value="false"/>
             <parameter key="use_quotes" value="true"/>
@@ -272,11 +272,11 @@
             <parameter key="read_not_matching_values_as_missings" value="true"/>
             <parameter key="datamanagement" value="double_array"/>
           </operator>
-          <operator activated="true" class="generate_id" compatibility="5.3.015" expanded="true" name="Generate ID (2)">
+          <operator activated="true" class="generate_id" compatibility="5.3.015" expanded="true" height="76" name="Generate ID (2)" width="90" x="313" y="30">
             <parameter key="create_nominal_ids" value="false"/>
             <parameter key="offset" value="0"/>
           </operator>
-          <connect from_op="Dax Train (2)" from_port="output" to_op="Generate ID (2)" to_port="example set input"/>
+          <connect from_op="Dax (2)" from_port="output" to_op="Generate ID (2)" to_port="example set input"/>
           <connect from_op="Generate ID (2)" from_port="example set output" to_port="out 1"/>
           <portSpacing port="source_in 1" spacing="0"/>
           <portSpacing port="sink_out 1" spacing="0"/>
@@ -291,7 +291,7 @@
         <parameter key="keep_both_join_attributes" value="false"/>
       </operator>
       <operator activated="true" class="write_csv" compatibility="5.3.015" expanded="true" height="76" name="Write CSV" width="90" x="313" y="345">
-        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\ARIMA\Predict_Close\ar334_ann_Dax.csv"/>
+        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\ARIMA\Predict_Close\ar334_knn_Dow.csv"/>
         <parameter key="column_separator" value=","/>
         <parameter key="write_attribute_names" value="true"/>
         <parameter key="quote_nominal_values" value="false"/>
