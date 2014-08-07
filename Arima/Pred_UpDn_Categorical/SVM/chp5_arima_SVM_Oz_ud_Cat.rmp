@@ -14,7 +14,7 @@
     <parameter key="encoding" value="SYSTEM"/>
     <process expanded="true">
       <operator activated="true" class="read_csv" compatibility="5.3.015" expanded="true" height="60" name="Read CSV" width="90" x="112" y="30">
-        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\Oz_2000.csv"/>
+        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\Oz_2000_updn.csv"/>
         <parameter key="column_separators" value=","/>
         <parameter key="trim_lines" value="false"/>
         <parameter key="use_quotes" value="true"/>
@@ -69,7 +69,7 @@
         </list>
       </operator>
       <operator activated="true" class="read_csv" compatibility="5.3.015" expanded="true" height="60" name="Read CSV (2)" width="90" x="45" y="525">
-        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\Oz_2000.csv"/>
+        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\Oz_2000_updn.csv"/>
         <parameter key="column_separators" value=","/>
         <parameter key="trim_lines" value="false"/>
         <parameter key="use_quotes" value="true"/>
@@ -184,7 +184,7 @@
         <parameter key="average_performances_only" value="true"/>
         <process expanded="true">
           <operator activated="true" class="support_vector_machine" compatibility="5.3.015" expanded="true" height="112" name="SVM" width="90" x="45" y="75">
-            <parameter key="kernel_type" value="dot"/>
+            <parameter key="kernel_type" value="gaussian_combination"/>
             <parameter key="kernel_gamma" value="1.0"/>
             <parameter key="kernel_sigma1" value="1.0"/>
             <parameter key="kernel_sigma2" value="0.0"/>
@@ -212,7 +212,6 @@
           </operator>
           <connect from_port="training" to_op="SVM" to_port="training set"/>
           <connect from_op="SVM" from_port="model" to_port="model"/>
-          <connect from_op="SVM" from_port="weights" to_port="through 1"/>
           <portSpacing port="source_training" spacing="0"/>
           <portSpacing port="sink_model" spacing="0"/>
           <portSpacing port="sink_through 1" spacing="0"/>
@@ -304,6 +303,9 @@
         <list key="application_parameters"/>
         <parameter key="create_view" value="false"/>
       </operator>
+      <operator activated="true" class="performance_support_vector_count" compatibility="5.3.015" expanded="true" height="76" name="Performance (3)" width="90" x="581" y="165">
+        <parameter key="optimization_direction" value="minimization"/>
+      </operator>
       <operator activated="true" class="performance_binominal_classification" compatibility="5.3.015" expanded="true" height="76" name="Performance Apply" width="90" x="447" y="345">
         <parameter key="main_criterion" value="first"/>
         <parameter key="accuracy" value="true"/>
@@ -362,11 +364,12 @@
       <connect from_op="Generate ID" from_port="example set output" to_op="Set Role (2)" to_port="example set input"/>
       <connect from_op="Set Role (2)" from_port="example set output" to_op="Apply Model (2)" to_port="unlabelled data"/>
       <connect from_op="Apply Model (2)" from_port="labelled data" to_op="Performance Apply" to_port="labelled data"/>
-      <connect from_op="Apply Model (2)" from_port="model" to_port="result 2"/>
-      <connect from_op="Performance Apply" from_port="performance" to_port="result 4"/>
+      <connect from_op="Apply Model (2)" from_port="model" to_op="Performance (3)" to_port="model"/>
+      <connect from_op="Performance (3)" from_port="performance vector" to_port="result 4"/>
+      <connect from_op="Performance Apply" from_port="performance" to_port="result 3"/>
       <connect from_op="Performance Apply" from_port="example set" to_op="Rename (3)" to_port="example set input"/>
       <connect from_op="Rename (3)" from_port="example set output" to_op="Write CSV" to_port="input"/>
-      <connect from_op="Write CSV" from_port="through" to_port="result 3"/>
+      <connect from_op="Write CSV" from_port="through" to_port="result 2"/>
       <portSpacing port="source_input 1" spacing="0"/>
       <portSpacing port="sink_result 1" spacing="0"/>
       <portSpacing port="sink_result 2" spacing="0"/>

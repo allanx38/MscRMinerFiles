@@ -201,8 +201,8 @@
           <operator activated="true" class="neural_net" compatibility="5.3.015" expanded="true" height="76" name="Neural Net" width="90" x="112" y="120">
             <list key="hidden_layers"/>
             <parameter key="training_cycles" value="500"/>
-            <parameter key="learning_rate" value="0.3"/>
-            <parameter key="momentum" value="0.2"/>
+            <parameter key="learning_rate" value="0.7"/>
+            <parameter key="momentum" value="0.1"/>
             <parameter key="decay" value="false"/>
             <parameter key="shuffle" value="true"/>
             <parameter key="normalize" value="true"/>
@@ -287,7 +287,7 @@
           <portSpacing port="sink_averagable 3" spacing="0"/>
         </process>
       </operator>
-      <operator activated="true" breakpoints="after" class="apply_model" compatibility="5.3.015" expanded="true" height="76" name="Apply Model (2)" width="90" x="447" y="255">
+      <operator activated="true" class="apply_model" compatibility="5.3.015" expanded="true" height="76" name="Apply Model (2)" width="90" x="447" y="255">
         <list key="application_parameters"/>
         <parameter key="create_view" value="false"/>
       </operator>
@@ -336,7 +336,7 @@
         <parameter key="new_name" value="pred"/>
         <list key="rename_additional_attributes"/>
       </operator>
-      <operator activated="true" class="write_csv" compatibility="5.3.015" expanded="true" height="76" name="Write CSV" width="90" x="581" y="255">
+      <operator activated="false" class="write_csv" compatibility="5.3.015" expanded="true" height="76" name="Write CSV" width="90" x="581" y="255">
         <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\ARIMA\PredUpDn_CAT\ar_334_UD_ANN_Dax.csv"/>
         <parameter key="column_separator" value=","/>
         <parameter key="write_attribute_names" value="true"/>
@@ -361,19 +361,20 @@
       <connect from_op="Validation" from_port="model" to_op="Apply Model (2)" to_port="model"/>
       <connect from_op="Validation" from_port="training" to_op="Apply Model (2)" to_port="unlabelled data"/>
       <connect from_op="Validation" from_port="averagable 1" to_port="result 1"/>
+      <connect from_op="Validation" from_port="averagable 2" to_port="result 5"/>
       <connect from_op="Apply Model (2)" from_port="labelled data" to_op="Performance (3)" to_port="labelled data"/>
       <connect from_op="Apply Model (2)" from_port="model" to_port="result 2"/>
       <connect from_op="Performance (3)" from_port="performance" to_port="result 4"/>
       <connect from_op="Performance (3)" from_port="example set" to_op="Join" to_port="right"/>
       <connect from_op="Join" from_port="join" to_op="Rename (3)" to_port="example set input"/>
-      <connect from_op="Rename (3)" from_port="example set output" to_op="Write CSV" to_port="input"/>
-      <connect from_op="Write CSV" from_port="through" to_port="result 3"/>
+      <connect from_op="Rename (3)" from_port="example set output" to_port="result 3"/>
       <portSpacing port="source_input 1" spacing="0"/>
       <portSpacing port="sink_result 1" spacing="0"/>
       <portSpacing port="sink_result 2" spacing="0"/>
       <portSpacing port="sink_result 3" spacing="0"/>
       <portSpacing port="sink_result 4" spacing="0"/>
       <portSpacing port="sink_result 5" spacing="0"/>
+      <portSpacing port="sink_result 6" spacing="0"/>
     </process>
   </operator>
 </process>

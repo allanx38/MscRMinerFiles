@@ -46,19 +46,12 @@
       </operator>
       <operator activated="true" class="subprocess" compatibility="5.3.015" expanded="true" height="76" name="Subprocess" width="90" x="179" y="30">
         <process expanded="true">
-          <operator activated="true" class="generate_attributes" compatibility="5.3.015" expanded="true" height="76" name="Generate Attributes (2)" width="90" x="45" y="30">
-            <list key="function_descriptions">
-              <parameter key="UD" value="if(Close&gt;Open,&quot;U&quot;,&quot;D&quot;)"/>
-            </list>
-            <parameter key="use_standard_constants" value="true"/>
-            <parameter key="keep_all" value="true"/>
-          </operator>
           <operator activated="true" class="generate_id" compatibility="5.3.015" expanded="true" height="76" name="Generate ID (4)" width="90" x="179" y="30">
             <parameter key="create_nominal_ids" value="false"/>
             <parameter key="offset" value="0"/>
           </operator>
           <operator activated="true" class="select_attributes" compatibility="5.3.015" expanded="true" height="76" name="Select Attributes (2)" width="90" x="313" y="30">
-            <parameter key="attribute_filter_type" value="subset"/>
+            <parameter key="attribute_filter_type" value="single"/>
             <parameter key="attribute" value="Close"/>
             <parameter key="attributes" value="|Close|UD"/>
             <parameter key="use_except_expression" value="false"/>
@@ -124,12 +117,11 @@
             <parameter key="invert_filter" value="false"/>
           </operator>
           <operator activated="true" class="set_role" compatibility="5.3.015" expanded="true" height="76" name="Set Role" width="90" x="313" y="210">
-            <parameter key="attribute_name" value="UD"/>
+            <parameter key="attribute_name" value="att1"/>
             <parameter key="target_role" value="label"/>
             <list key="set_additional_roles"/>
           </operator>
-          <connect from_port="in 1" to_op="Generate Attributes (2)" to_port="example set input"/>
-          <connect from_op="Generate Attributes (2)" from_port="example set output" to_op="Generate ID (4)" to_port="example set input"/>
+          <connect from_port="in 1" to_op="Generate ID (4)" to_port="example set input"/>
           <connect from_op="Generate ID (4)" from_port="example set output" to_op="Select Attributes (2)" to_port="example set input"/>
           <connect from_op="Select Attributes (2)" from_port="example set output" to_op="Rename" to_port="example set input"/>
           <connect from_op="Rename" from_port="example set output" to_op="Moving Average" to_port="example set input"/>
@@ -145,38 +137,15 @@
           <portSpacing port="sink_out 2" spacing="0"/>
         </process>
       </operator>
-      <operator activated="true" class="series:sliding_window_validation" compatibility="5.3.000" expanded="true" height="130" name="Validation" width="90" x="313" y="30">
+      <operator activated="true" class="series:sliding_window_validation" compatibility="5.3.000" expanded="true" height="148" name="Validation" width="90" x="313" y="30">
         <parameter key="create_complete_model" value="false"/>
         <parameter key="training_window_width" value="20"/>
-        <parameter key="training_window_step_size" value="-1"/>
+        <parameter key="training_window_step_size" value="1"/>
         <parameter key="test_window_width" value="20"/>
         <parameter key="horizon" value="1"/>
         <parameter key="cumulative_training" value="false"/>
         <parameter key="average_performances_only" value="true"/>
         <process expanded="true">
-          <operator activated="false" class="linear_regression" compatibility="5.3.015" expanded="true" height="94" name="Linear Regression" width="90" x="45" y="30">
-            <parameter key="feature_selection" value="M5 prime"/>
-            <parameter key="alpha" value="0.05"/>
-            <parameter key="max_iterations" value="10"/>
-            <parameter key="forward_alpha" value="0.05"/>
-            <parameter key="backward_alpha" value="0.05"/>
-            <parameter key="eliminate_colinear_features" value="true"/>
-            <parameter key="min_tolerance" value="0.05"/>
-            <parameter key="use_bias" value="true"/>
-            <parameter key="ridge" value="1.0E-8"/>
-          </operator>
-          <operator activated="false" class="neural_net" compatibility="5.3.015" expanded="true" height="76" name="Neural Net" width="90" x="112" y="165">
-            <list key="hidden_layers"/>
-            <parameter key="training_cycles" value="500"/>
-            <parameter key="learning_rate" value="0.3"/>
-            <parameter key="momentum" value="0.2"/>
-            <parameter key="decay" value="false"/>
-            <parameter key="shuffle" value="true"/>
-            <parameter key="normalize" value="true"/>
-            <parameter key="error_epsilon" value="1.0E-5"/>
-            <parameter key="use_local_random_seed" value="false"/>
-            <parameter key="local_random_seed" value="1992"/>
-          </operator>
           <operator activated="true" class="k_nn" compatibility="5.3.015" expanded="true" height="76" name="k-NN" width="90" x="112" y="255">
             <parameter key="k" value="15"/>
             <parameter key="weighted_vote" value="false"/>
@@ -207,18 +176,21 @@
             <list key="application_parameters"/>
             <parameter key="create_view" value="false"/>
           </operator>
-          <operator activated="true" class="series:forecasting_performance" compatibility="5.3.000" expanded="true" height="76" name="Performance" width="90" x="179" y="165">
+          <operator activated="true" class="series:forecasting_performance" compatibility="5.3.000" expanded="true" height="76" name="Performance Xv" width="90" x="179" y="120">
             <parameter key="horizon" value="1"/>
             <parameter key="main_criterion" value="first"/>
             <parameter key="prediction_trend_accuracy" value="true"/>
             <parameter key="skip_undefined_labels" value="true"/>
             <parameter key="use_example_weights" value="true"/>
           </operator>
+          <operator activated="false" class="performance" compatibility="5.3.015" expanded="true" height="76" name="Performance (3)" width="90" x="112" y="210">
+            <parameter key="use_example_weights" value="true"/>
+          </operator>
           <connect from_port="model" to_op="Apply Model" to_port="model"/>
           <connect from_port="test set" to_op="Apply Model" to_port="unlabelled data"/>
           <connect from_port="through 1" to_port="averagable 1"/>
-          <connect from_op="Apply Model" from_port="labelled data" to_op="Performance" to_port="labelled data"/>
-          <connect from_op="Performance" from_port="performance" to_port="averagable 2"/>
+          <connect from_op="Apply Model" from_port="labelled data" to_op="Performance Xv" to_port="labelled data"/>
+          <connect from_op="Performance Xv" from_port="performance" to_port="averagable 2"/>
           <portSpacing port="source_model" spacing="0"/>
           <portSpacing port="source_test set" spacing="0"/>
           <portSpacing port="source_through 1" spacing="0"/>
@@ -226,6 +198,7 @@
           <portSpacing port="sink_averagable 1" spacing="0"/>
           <portSpacing port="sink_averagable 2" spacing="0"/>
           <portSpacing port="sink_averagable 3" spacing="0"/>
+          <portSpacing port="sink_averagable 4" spacing="0"/>
         </process>
       </operator>
       <operator activated="true" class="read_csv" compatibility="5.3.015" expanded="true" height="60" name="Read CSV Test" width="90" x="45" y="120">
@@ -261,19 +234,12 @@
       </operator>
       <operator activated="true" class="subprocess" compatibility="5.3.015" expanded="true" height="76" name="Subprocess (2)" width="90" x="179" y="120">
         <process expanded="true">
-          <operator activated="true" class="generate_attributes" compatibility="5.3.015" expanded="true" height="76" name="Generate Attributes (3)" width="90" x="45" y="30">
-            <list key="function_descriptions">
-              <parameter key="UD" value="if(Close&gt;Open,&quot;U&quot;,&quot;D&quot;)"/>
-            </list>
-            <parameter key="use_standard_constants" value="true"/>
-            <parameter key="keep_all" value="true"/>
-          </operator>
-          <operator activated="true" class="generate_id" compatibility="5.3.015" expanded="true" height="76" name="Generate ID (2)" width="90" x="180" y="30">
+          <operator activated="true" class="generate_id" compatibility="5.3.015" expanded="true" height="76" name="Generate ID (2)" width="90" x="45" y="30">
             <parameter key="create_nominal_ids" value="false"/>
             <parameter key="offset" value="0"/>
           </operator>
-          <operator activated="true" class="select_attributes" compatibility="5.3.015" expanded="true" height="76" name="Select Attributes (3)" width="90" x="315" y="30">
-            <parameter key="attribute_filter_type" value="subset"/>
+          <operator activated="true" class="select_attributes" compatibility="5.3.015" expanded="true" height="76" name="Select Attributes (3)" width="90" x="180" y="30">
+            <parameter key="attribute_filter_type" value="single"/>
             <parameter key="attribute" value="Close"/>
             <parameter key="attributes" value="|Close|UD"/>
             <parameter key="use_except_expression" value="false"/>
@@ -286,12 +252,12 @@
             <parameter key="invert_selection" value="false"/>
             <parameter key="include_special_attributes" value="false"/>
           </operator>
-          <operator activated="true" class="rename" compatibility="5.3.015" expanded="true" height="76" name="Rename (2)" width="90" x="450" y="30">
+          <operator activated="true" class="rename" compatibility="5.3.015" expanded="true" height="76" name="Rename (2)" width="90" x="315" y="30">
             <parameter key="old_name" value="Close"/>
             <parameter key="new_name" value="att1"/>
             <list key="rename_additional_attributes"/>
           </operator>
-          <operator activated="true" class="series:moving_average" compatibility="5.2.000" expanded="true" height="76" name="Moving Average (2)" width="90" x="585" y="30">
+          <operator activated="true" class="series:moving_average" compatibility="5.2.000" expanded="true" height="76" name="Moving Average (2)" width="90" x="450" y="30">
             <parameter key="attribute_name" value="att1"/>
             <parameter key="window_width" value="3"/>
             <parameter key="aggregation_function" value="average"/>
@@ -338,13 +304,12 @@
             <parameter key="condition_class" value="no_missing_attributes"/>
             <parameter key="invert_filter" value="false"/>
           </operator>
-          <operator activated="true" class="set_role" compatibility="5.3.015" expanded="true" height="76" name="Set Role (2)" width="90" x="581" y="120">
-            <parameter key="attribute_name" value="UD"/>
+          <operator activated="true" class="set_role" compatibility="5.3.015" expanded="true" height="76" name="Set Role (2)" width="90" x="552" y="75">
+            <parameter key="attribute_name" value="att1"/>
             <parameter key="target_role" value="label"/>
             <list key="set_additional_roles"/>
           </operator>
-          <connect from_port="in 1" to_op="Generate Attributes (3)" to_port="example set input"/>
-          <connect from_op="Generate Attributes (3)" from_port="example set output" to_op="Generate ID (2)" to_port="example set input"/>
+          <connect from_port="in 1" to_op="Generate ID (2)" to_port="example set input"/>
           <connect from_op="Generate ID (2)" from_port="example set output" to_op="Select Attributes (3)" to_port="example set input"/>
           <connect from_op="Select Attributes (3)" from_port="example set output" to_op="Rename (2)" to_port="example set input"/>
           <connect from_op="Rename (2)" from_port="example set output" to_op="Moving Average (2)" to_port="example set input"/>
@@ -360,7 +325,7 @@
           <portSpacing port="sink_out 2" spacing="0"/>
         </process>
       </operator>
-      <operator activated="true" class="apply_model" compatibility="5.3.015" expanded="true" height="76" name="Apply Model (2)" width="90" x="447" y="75">
+      <operator activated="true" class="apply_model" compatibility="5.3.015" expanded="true" height="76" name="Apply Model (2)" width="90" x="447" y="30">
         <list key="application_parameters"/>
         <parameter key="create_view" value="false"/>
       </operator>
@@ -399,8 +364,57 @@
         <parameter key="create_nominal_ids" value="false"/>
         <parameter key="offset" value="0"/>
       </operator>
-      <operator activated="false" class="write_csv" compatibility="5.3.015" expanded="true" height="76" name="Write CSV" width="90" x="447" y="300">
-        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\rm_ar334_reg.csv"/>
+      <operator activated="true" class="performance" compatibility="5.3.015" expanded="true" height="76" name="Performance (2)" width="90" x="313" y="255">
+        <parameter key="use_example_weights" value="true"/>
+      </operator>
+      <operator activated="false" class="series:forecasting_performance" compatibility="5.3.000" expanded="true" height="76" name="Performance Xv (2)" width="90" x="179" y="345">
+        <parameter key="horizon" value="1"/>
+        <parameter key="main_criterion" value="first"/>
+        <parameter key="prediction_trend_accuracy" value="true"/>
+        <parameter key="skip_undefined_labels" value="true"/>
+        <parameter key="use_example_weights" value="true"/>
+      </operator>
+      <operator activated="true" class="join" compatibility="5.3.015" expanded="true" height="76" name="Join" width="90" x="447" y="165">
+        <parameter key="remove_double_attributes" value="true"/>
+        <parameter key="join_type" value="inner"/>
+        <parameter key="use_id_attribute_as_key" value="true"/>
+        <list key="key_attributes"/>
+        <parameter key="keep_both_join_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="5.3.015" expanded="true" height="76" name="Sub - calc diff" width="90" x="447" y="300">
+        <process expanded="true">
+          <operator activated="true" class="series:lag_series" compatibility="5.3.000" expanded="true" height="76" name="Lag Close" width="90" x="45" y="30">
+            <list key="attributes">
+              <parameter key="Close" value="1"/>
+            </list>
+          </operator>
+          <operator activated="true" class="rename" compatibility="5.3.015" expanded="true" height="76" name="Rename (3)" width="90" x="180" y="30">
+            <parameter key="old_name" value="Close-1"/>
+            <parameter key="new_name" value="PrevClose"/>
+            <list key="rename_additional_attributes">
+              <parameter key="prediction(att1)" value="Pred"/>
+            </list>
+          </operator>
+          <operator activated="true" class="generate_attributes" compatibility="5.3.015" expanded="true" height="76" name="Generate Attributes" width="90" x="387" y="30">
+            <list key="function_descriptions">
+              <parameter key="Diff" value="PrevClose - Pred"/>
+              <parameter key="ActDiff" value="PrevClose - Close"/>
+            </list>
+            <parameter key="use_standard_constants" value="true"/>
+            <parameter key="keep_all" value="true"/>
+          </operator>
+          <connect from_port="in 1" to_op="Lag Close" to_port="example set input"/>
+          <connect from_op="Lag Close" from_port="example set output" to_op="Rename (3)" to_port="example set input"/>
+          <connect from_op="Rename (3)" from_port="example set output" to_op="Generate Attributes" to_port="example set input"/>
+          <connect from_op="Generate Attributes" from_port="example set output" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="write_csv" compatibility="5.3.015" expanded="true" height="76" name="Write CSV" width="90" x="581" y="255">
+        <parameter key="csv_file" value="D:\Allan\DropBox\MSc\Dissertation\Thesis\Data\ARIMA2\Predict_Close\ar334_knn_Dax.csv"/>
         <parameter key="column_separator" value=","/>
         <parameter key="write_attribute_names" value="true"/>
         <parameter key="quote_nominal_values" value="false"/>
@@ -408,58 +422,29 @@
         <parameter key="append_to_file" value="false"/>
         <parameter key="encoding" value="SYSTEM"/>
       </operator>
-      <operator activated="true" class="performance_binominal_classification" compatibility="5.3.015" expanded="true" height="76" name="Performance Test" width="90" x="313" y="210">
-        <parameter key="main_criterion" value="first"/>
-        <parameter key="accuracy" value="true"/>
-        <parameter key="classification_error" value="false"/>
-        <parameter key="kappa" value="false"/>
-        <parameter key="AUC (optimistic)" value="false"/>
-        <parameter key="AUC" value="false"/>
-        <parameter key="AUC (pessimistic)" value="false"/>
-        <parameter key="precision" value="false"/>
-        <parameter key="recall" value="false"/>
-        <parameter key="lift" value="false"/>
-        <parameter key="fallout" value="false"/>
-        <parameter key="f_measure" value="false"/>
-        <parameter key="false_positive" value="false"/>
-        <parameter key="false_negative" value="false"/>
-        <parameter key="true_positive" value="false"/>
-        <parameter key="true_negative" value="false"/>
-        <parameter key="sensitivity" value="false"/>
-        <parameter key="specificity" value="false"/>
-        <parameter key="youden" value="false"/>
-        <parameter key="positive_predictive_value" value="false"/>
-        <parameter key="negative_predictive_value" value="false"/>
-        <parameter key="psep" value="false"/>
-        <parameter key="skip_undefined_labels" value="true"/>
-        <parameter key="use_example_weights" value="true"/>
-      </operator>
-      <operator activated="true" class="join" compatibility="5.3.015" expanded="true" height="76" name="Join" width="90" x="447" y="210">
-        <parameter key="remove_double_attributes" value="true"/>
-        <parameter key="join_type" value="inner"/>
-        <parameter key="use_id_attribute_as_key" value="true"/>
-        <list key="key_attributes"/>
-        <parameter key="keep_both_join_attributes" value="false"/>
-      </operator>
       <connect from_op="Read CSV" from_port="output" to_op="Subprocess" to_port="in 1"/>
       <connect from_op="Subprocess" from_port="out 1" to_op="Validation" to_port="training"/>
       <connect from_op="Validation" from_port="model" to_op="Apply Model (2)" to_port="model"/>
       <connect from_op="Validation" from_port="averagable 1" to_port="result 1"/>
+      <connect from_op="Validation" from_port="averagable 2" to_port="result 2"/>
+      <connect from_op="Validation" from_port="averagable 3" to_port="result 3"/>
       <connect from_op="Read CSV Test" from_port="output" to_op="Subprocess (2)" to_port="in 1"/>
       <connect from_op="Subprocess (2)" from_port="out 1" to_op="Apply Model (2)" to_port="unlabelled data"/>
-      <connect from_op="Apply Model (2)" from_port="labelled data" to_op="Performance Test" to_port="labelled data"/>
-      <connect from_op="Apply Model (2)" from_port="model" to_port="result 2"/>
+      <connect from_op="Apply Model (2)" from_port="labelled data" to_op="Performance (2)" to_port="labelled data"/>
       <connect from_op="Read CSV Test (2)" from_port="output" to_op="Generate ID" to_port="example set input"/>
       <connect from_op="Generate ID" from_port="example set output" to_op="Join" to_port="left"/>
-      <connect from_op="Performance Test" from_port="performance" to_port="result 4"/>
-      <connect from_op="Performance Test" from_port="example set" to_op="Join" to_port="right"/>
-      <connect from_op="Join" from_port="join" to_port="result 3"/>
+      <connect from_op="Performance (2)" from_port="performance" to_port="result 5"/>
+      <connect from_op="Performance (2)" from_port="example set" to_op="Join" to_port="right"/>
+      <connect from_op="Join" from_port="join" to_op="Sub - calc diff" to_port="in 1"/>
+      <connect from_op="Sub - calc diff" from_port="out 1" to_op="Write CSV" to_port="input"/>
+      <connect from_op="Write CSV" from_port="through" to_port="result 4"/>
       <portSpacing port="source_input 1" spacing="0"/>
       <portSpacing port="sink_result 1" spacing="0"/>
       <portSpacing port="sink_result 2" spacing="0"/>
       <portSpacing port="sink_result 3" spacing="0"/>
       <portSpacing port="sink_result 4" spacing="0"/>
       <portSpacing port="sink_result 5" spacing="0"/>
+      <portSpacing port="sink_result 6" spacing="0"/>
     </process>
   </operator>
 </process>
